@@ -30,7 +30,8 @@ class UserEvent {
 }
 
 class UserBloc {
-  List<User> users = [];
+  final UserData _userData = UserData();
+  final PlanData _planData = PlanData();
 
   //State Management for user
   final _userListStreamController = StreamController<List<User>>.broadcast();
@@ -63,8 +64,6 @@ class UserBloc {
   Stream<UserEvent> get _userEventStream => _userEventStreamController.stream;
 
   UserBloc() {
-    users = UserData().users;
-    // plans = PlanData().plans;
     _userEventStream.listen((event) {
       switch (event.userEvent) {
         case UserAction.addUser:
@@ -99,24 +98,23 @@ class UserBloc {
   void _resetFilter() {}
 
   void _updateUser(User? user) {
-    if (user != null) {
-      if (UserData().update(user)) {
-        users = UserData().users;
-        userEventSink.add(UserEvent(UserAction.getUserList, null));
-        _updateUserSink.add(true);
-      }
-    }
+    // if (user != null) {
+    //   if (UserData().update(user)) {
+    //     users = UserData().users;
+    //     userEventSink.add(UserEvent(UserAction.getUserList, null));
+    //     _updateUserSink.add(true);
+    //   }
+    // }
   }
 
   void _getUserList() {
-    users = UserData().users;
-    _userListSink.add(users);
+    _userData.users.then((users) => {_userListSink.add(users)});
   }
 
   void _deletePlan(String? planTitle) {
     if (planTitle != null) {
-      PlanData().deletePlan(planTitle).then((value) {
-        PlanData().planList.then((plans) {
+      _planData.deletePlan(planTitle).then((value) {
+        _planData.planList.then((plans) {
           _getplanSink.add(plans);
         });
       });
@@ -124,29 +122,38 @@ class UserBloc {
   }
 
   void _getPlans() {
-    PlanData().planList.then((plans) {
+    _planData.planList.then((plans) {
       _getplanSink.add(plans);
     });
   }
 
   void _getUserID() {
-    int length = users.length;
-    _getuserIDSink.add(length + 1);
+    _userData.users.then((users) {
+      int length = users.length;
+      _getuserIDSink.add(length + 1);
+    });
   }
 
   void _addUser(User? user) {
     if (user != null) {
-      if (UserData().save(user)) {
-        users = UserData().users;
-        userEventSink.add(UserEvent(UserAction.getTotalUser, null));
-        _addUserSink.add(true);
-      }
+      print(user.id);
+      print(user.phoneno);
+      _userData.save(user).then((value) {
+        if (value) {
+          userEventSink.add(UserEvent(UserAction.getTotalUser, null));
+          _addUserSink.add(true);
+        } else {
+          _addUserSink.add(false);
+        }
+      });
     }
   }
 
   void _getTotalUser() {
-    int length = users.length;
-    _gettotaluserSink.add(length);
+    _userData.users.then((users) {
+      int length = users.length;
+      _gettotaluserSink.add(length);
+    });
   }
 
   void dispose() {

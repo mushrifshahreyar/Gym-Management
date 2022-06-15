@@ -23,8 +23,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BillBloc billBloc = BillBloc();
-    final UserBloc userBloc = UserBloc();
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gym App',

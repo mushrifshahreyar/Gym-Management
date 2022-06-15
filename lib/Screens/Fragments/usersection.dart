@@ -166,10 +166,6 @@ class _AddUserTileState extends State<AddUserTile> {
   Widget addUserTileBottom(BuildContext context, bool isSmall) {
     HomePage.userBLoc.userEventSink
         .add(UserEvent(UserAction.getTotalUser, null));
-    // HomePageInherited.of(context)!
-    //     .userBloc
-    //     .userEventSink
-    //     .add(UserEvent(UserEvent.getTotalUser, null));
 
     return Row(children: [
       Container(

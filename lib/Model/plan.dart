@@ -1,5 +1,5 @@
 class Plan {
-  int id;
+  String id;
   String planTitle;
   double monthlyprice;
   double totalPrice;

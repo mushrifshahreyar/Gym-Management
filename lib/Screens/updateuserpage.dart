@@ -388,8 +388,6 @@ class _ShowFormState extends State<ShowForm> {
       textcontroller.text = widget.user.phoneno.toString();
       HomePage.billBloc.billEventSink
           .add(BillEvent(BillAction.updatePhoneNo, widget.user));
-    } else if (title == "Address") {
-      textcontroller.text = widget.user.address.toString();
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,

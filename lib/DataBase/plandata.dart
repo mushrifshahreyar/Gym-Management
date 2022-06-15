@@ -8,9 +8,10 @@ class PlanData {
 
   Future<List<Plan>> get planList async {
     var plans = await Firestore(projectId).collection('plan').get();
+    _planList.clear();
     for (Document plan in plans) {
       _planList.add(Plan(
-          int.parse(plan.id),
+          plan.id,
           plan['planTitle'],
           double.parse(plan['monthlyprice']),
           double.parse(plan['totalPrice']),
@@ -27,7 +28,7 @@ class PlanData {
           if (plan.planTitle == planTitle) {
             return Firestore(projectId)
                 .collection('plan')
-                .document(plan.id.toString())
+                .document(plan.id)
                 .delete();
           }
         }
@@ -37,7 +38,7 @@ class PlanData {
         if (plan.planTitle == planTitle) {
           return Firestore(projectId)
               .collection('plan')
-              .document(plan.id.toString())
+              .document(plan.id)
               .delete();
         }
       }

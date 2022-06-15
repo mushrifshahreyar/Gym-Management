@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:gymadminapp/Bloc/userbloc.dart';
 import 'package:gymadminapp/Model/plan.dart';
 import 'package:gymadminapp/Model/user.dart';
-import 'package:intl/intl.dart';
+import 'package:gymadminapp/constants.dart';
 
-Dialog updatePlanDialog(BuildContext context, bool isUpdate, Plan plan) =>
-    Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 16,
-      child: SizedBox(
-        height: 500,
-        width: 450,
-        child: Column(
-          children: [
-            showHeader(context, isUpdate),
-            showField(context, isUpdate, plan)
-          ],
-        ),
+final formKey = GlobalKey<FormState>();
+Dialog updatePlanDialog(BuildContext context, bool isUpdate, Plan? plan) {
+  plan = plan ?? Plan("", "", -1, -1, -1);
+  return Dialog(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    elevation: 16,
+    child: SizedBox(
+      height: 500,
+      width: 450,
+      child: Column(
+        children: [
+          showHeader(context, isUpdate),
+          showField(context, isUpdate, plan)
+        ],
       ),
-    );
+    ),
+  );
+}
 
 Widget showHeader(BuildContext context, bool isUpdate) {
   return Container(
@@ -34,14 +37,16 @@ Widget showField(BuildContext context, bool isUpdate, Plan plan) {
   return Container(
     margin: const EdgeInsets.all(10),
     child: Form(
+      key: formKey,
       child: Column(children: [
-        field(context, "Plan Duration", isUpdate, plan.duration.toString()),
-        field(context, "Plan Amount/ Month", isUpdate,
-            plan.monthlyprice.toString()),
-        field(context, "Plan Amount", isUpdate, plan.totalPrice.toString()),
-        plan.planTitle == "1 Month"
-            ? button(context, "Submit", plan)
-            : showbutton(context, plan),
+        field(context, "Plan Duration", isUpdate, plan),
+        field(context, "Plan Amount/ Month", isUpdate, plan),
+        field(context, "Total Amount", isUpdate, plan),
+        isUpdate
+            ? plan.planTitle == "1 Month"
+                ? button(context, "Submit", plan)
+                : showbutton(context, plan)
+            : button(context, "Submit", plan),
       ]),
     ),
   );
@@ -131,10 +136,16 @@ Widget confirmationDelete(BuildContext context, Plan plan) {
   );
 }
 
-Widget field(BuildContext context, String title, bool isUpdate, String value) {
+Widget field(BuildContext context, String title, bool isUpdate, Plan plan) {
   final TextEditingController textcontroller = TextEditingController();
   if (isUpdate) {
-    textcontroller.text = value.toString();
+    if (title == "Plan Duration") {
+      textcontroller.text = plan.duration.toString();
+    } else if (title == "Plan Amount/ Month") {
+      textcontroller.text = plan.monthlyprice.toString();
+    } else if (title == "Total Amount") {
+      textcontroller.text = plan.totalPrice.toString();
+    }
   }
   return Row(
     mainAxisAlignment: MainAxisAlignment.start,
@@ -164,6 +175,27 @@ Widget field(BuildContext context, String title, bool isUpdate, String value) {
                     borderSide: BorderSide(width: 1, color: Colors.amber)),
                 errorBorder: OutlineInputBorder(
                     borderSide: BorderSide(width: 1, color: Colors.red))),
+            onSaved: (newValue) {
+              if (newValue != null) {
+                if (title == "Plan Duration") {
+                  plan.duration = int.parse(newValue);
+                } else if (title == "Plan Amount/ Month") {
+                  plan.monthlyprice = double.parse(newValue);
+                } else if (title == "Total Amount") {
+                  plan.totalPrice = double.parse(newValue);
+                }
+
+                if (!isUpdate) {
+                  if (plan.duration < 12) {
+                    plan.planTitle = plan.duration.toString() + MONTH;
+                  } else if (plan.duration % 12 == 0) {
+                    plan.planTitle = plan.duration.toString() + YEAR;
+                  } else {
+                    plan.planTitle = plan.duration.toString() + MONTH;
+                  }
+                }
+              }
+            },
           ),
         ),
       ),

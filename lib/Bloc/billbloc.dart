@@ -12,7 +12,7 @@ class BillEvent {
 }
 
 class BillBloc {
-  List<Plan> _plans = [];
+  final PlanData _planData = PlanData();
 
   final _updateNameStreamController = StreamController<String?>.broadcast();
   StreamSink<String?> get _updateNameSink => _updateNameStreamController.sink;
@@ -82,18 +82,21 @@ class BillBloc {
 
   void _updatePlan(User user) {
     _updatePlanSink.add(user.plan);
-    Plan userPlan = _plans[0];
-    for (var plan in _plans) {
-      if (plan.planTitle == user.plan) {
-        userPlan = plan;
+    _planData.planList.then((plans) {
+      Plan userPlan = plans[0];
+      for (var plan in plans) {
+        if (plan.planTitle == user.plan) {
+          userPlan = plan;
+        }
       }
-    }
-    double totalAmount = userPlan.totalPrice;
+      double totalAmount = userPlan.totalPrice;
 
-    String paymentDet = "${userPlan.monthlyprice} x ${userPlan.duration} Month";
+      String paymentDet =
+          "${userPlan.monthlyprice} x ${userPlan.duration} Month";
 
-    _updatePaymentDetSink.add(paymentDet);
-    _updateAmountSink.add(totalAmount.toString());
+      _updatePaymentDetSink.add(paymentDet);
+      _updateAmountSink.add(totalAmount.toString());
+    });
   }
 
   void _updateSession(User user) {

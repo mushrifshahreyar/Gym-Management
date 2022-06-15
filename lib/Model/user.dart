@@ -1,15 +1,14 @@
 class User {
   int? _id;
   String? _name;
-  String? _address;
   String? _phoneNo;
   String? _plan;
   String? _session;
   DateTime? _startdate;
   double? _totalAmount;
 
-  User(this._id, this._name, this._address, this._phoneNo, this._plan,
-      this._session, this._totalAmount, this._startdate);
+  User(this._id, this._name, this._phoneNo, this._plan, this._session,
+      this._totalAmount, this._startdate);
 
   User.newInstance();
   //setter
@@ -19,10 +18,6 @@ class User {
 
   set name(String? name) {
     _name = name;
-  }
-
-  set address(String? address) {
-    _address = address;
   }
 
   set phoneno(String? phoneno) {
@@ -49,8 +44,6 @@ class User {
   int? get id => _id;
 
   String? get name => _name;
-
-  String? get address => _address;
 
   String? get phoneno => _phoneNo;
 

@@ -88,7 +88,11 @@ class UpdatePlan extends StatelessWidget {
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: Colors.indigo[700], onPrimary: Colors.white),
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => updatePlanDialog(context, false, null));
+          },
           child: const Text('Add Plan')),
     );
   }
